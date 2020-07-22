@@ -44,7 +44,7 @@ namespace SFB.Samples
 
 
         // Listen OnClick event in standlone builds
-        void Start()
+        private void Start()
         {
             var button = GetComponent<Button>();
             button.onClick.AddListener(OnClick);

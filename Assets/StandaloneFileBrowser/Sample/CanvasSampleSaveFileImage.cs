@@ -16,7 +16,7 @@ namespace SFB.Samples
         private byte[] textureBytes;
 
 
-        void Awake()
+        private void Awake()
         {
             // Create red texture
             var width = 100;
@@ -63,7 +63,7 @@ namespace SFB.Samples
 
 
         // Listen OnClick event in standlone builds
-        void Start()
+        private void Start()
         {
             var button = GetComponent<Button>();
             button.onClick.AddListener(OnClick);

@@ -9,7 +9,7 @@ namespace SFB.Samples
         private string path;
 
 
-        void OnGUI()
+        private void OnGUI()
         {
             var guiScale = new Vector3(Screen.width / 800.0f, Screen.height / 600.0f, 1.0f);
             GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, guiScale);

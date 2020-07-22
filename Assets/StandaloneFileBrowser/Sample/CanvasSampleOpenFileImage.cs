@@ -42,7 +42,7 @@ namespace SFB.Samples
         public void OnPointerDown(PointerEventData _eventData) { }
 
 
-        void Start()
+        private void Start()
         {
             var button = GetComponent<Button>();
             button.onClick.AddListener(OnClick);
