@@ -4,78 +4,80 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using SFB;
 
 
-[RequireComponent(typeof(Button))]
-public class CanvasSampleSaveFileImage : MonoBehaviour, IPointerDownHandler
+namespace SFB.Samples
 {
-    public Text output;
-
-    private byte[] textureBytes;
-
-
-    void Awake()
+    [RequireComponent(typeof(Button))]
+    public class CanvasSampleSaveFileImage : MonoBehaviour, IPointerDownHandler
     {
-        // Create red texture
-        var width = 100;
-        var height = 100;
-        Texture2D tex = new Texture2D(width, height, TextureFormat.RGB24, false);
-        for (int i = 0; i < width; i++)
+        public Text output;
+
+        private byte[] textureBytes;
+
+
+        void Awake()
         {
-            for (int j = 0; j < height; j++)
+            // Create red texture
+            var width = 100;
+            var height = 100;
+            Texture2D tex = new Texture2D(width, height, TextureFormat.RGB24, false);
+            for (int i = 0; i < width; i++)
             {
-                tex.SetPixel(i, j, Color.red);
+                for (int j = 0; j < height; j++)
+                {
+                    tex.SetPixel(i, j, Color.red);
+                }
             }
+            tex.Apply();
+            textureBytes = tex.EncodeToPNG();
+            UnityEngine.Object.Destroy(tex);
         }
-        tex.Apply();
-        textureBytes = tex.EncodeToPNG();
-        UnityEngine.Object.Destroy(tex);
-    }
 
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-    // WebGL
+        // WebGL
 
 
-    [DllImport("__Internal")]
-    private static extern void DownloadFile(string _gameObjectName, string _methodName, string _fileName, byte[] _byteArray, int _byteArraySize);
+        [DllImport("__Internal")]
+        private static extern void DownloadFile(string _gameObjectName, string _methodName, string _fileName, byte[] _byteArray, int _byteArraySize);
 
 
-    // Broser plugin should be called in OnPointerDown.
-    public void OnPointerDown(PointerEventData _eventData)
-    {
-        DownloadFile(gameObject.name, "OnFileDownload", "sample.png", textureBytes, textureBytes.Length);
-    }
-
-
-    // Called from browser
-    public void OnFileDownload()
-    {
-        output.text = "File Successfully Downloaded";
-    }
-#else
-    // Standalone platforms & editor
-
-
-    public void OnPointerDown(PointerEventData _eventData) { }
-
-
-    // Listen OnClick event in standlone builds
-    void Start()
-    {
-        var button = GetComponent<Button>();
-        button.onClick.AddListener(OnClick);
-    }
-
-
-    public void OnClick()
-    {
-        var path = StandaloneFileBrowser.SaveFilePanel("Title", "", "sample", "png");
-        if (!string.IsNullOrEmpty(path))
+        // Broser plugin should be called in OnPointerDown.
+        public void OnPointerDown(PointerEventData _eventData)
         {
-            File.WriteAllBytes(path, textureBytes);
+            DownloadFile(gameObject.name, "OnFileDownload", "sample.png", textureBytes, textureBytes.Length);
         }
-    }
+
+
+        // Called from browser
+        public void OnFileDownload()
+        {
+            output.text = "File Successfully Downloaded";
+        }
+#else
+        // Standalone platforms & editor
+
+
+        public void OnPointerDown(PointerEventData _eventData) { }
+
+
+        // Listen OnClick event in standlone builds
+        void Start()
+        {
+            var button = GetComponent<Button>();
+            button.onClick.AddListener(OnClick);
+        }
+
+
+        public void OnClick()
+        {
+            var path = StandaloneFileBrowser.SaveFilePanel("Title", "", "sample", "png");
+            if (!string.IsNullOrEmpty(path))
+            {
+                File.WriteAllBytes(path, textureBytes);
+            }
+        }
 #endif
+    }
 }
