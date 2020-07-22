@@ -5,7 +5,7 @@ using SFB;
 
 public class BasicSample : MonoBehaviour
 {
-    private string _path;
+    private string path;
 
 
     void OnGUI()
@@ -83,27 +83,27 @@ public class BasicSample : MonoBehaviour
 
         if (GUILayout.Button("Save File"))
         {
-            _path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "", "");
+            path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "", "");
         }
         GUILayout.Space(5);
         if (GUILayout.Button("Save File Async"))
         {
-            StandaloneFileBrowser.SaveFilePanelAsync("Save File", "", "", "", (string path) => { WriteResult(path); });
+            StandaloneFileBrowser.SaveFilePanelAsync("Save File", "", "", "", (string filePath) => { WriteResult(filePath); });
         }
         GUILayout.Space(5);
         if (GUILayout.Button("Save File Default Name"))
         {
-            _path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "MySaveFile", "");
+            path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "MySaveFile", "");
         }
         GUILayout.Space(5);
         if (GUILayout.Button("Save File Default Name Ext"))
         {
-            _path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "MySaveFile", "dat");
+            path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "MySaveFile", "dat");
         }
         GUILayout.Space(5);
         if (GUILayout.Button("Save File Directory"))
         {
-            _path = StandaloneFileBrowser.SaveFilePanel("Save File", Application.dataPath, "", "");
+            path = StandaloneFileBrowser.SaveFilePanel("Save File", Application.dataPath, "", "");
         }
         GUILayout.Space(5);
         if (GUILayout.Button("Save File Filter"))
@@ -114,33 +114,33 @@ public class BasicSample : MonoBehaviour
                 new ExtensionFilter("Binary", "bin"),
                 new ExtensionFilter("Text", "txt"),
             };
-            _path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "MySaveFile", extensionList);
+            path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "MySaveFile", extensionList);
         }
 
         GUILayout.EndVertical();
         GUILayout.Space(20);
-        GUILayout.Label(_path);
+        GUILayout.Label(path);
         GUILayout.EndHorizontal();
     }
 
 
-    public void WriteResult(string[] paths)
+    public void WriteResult(string[] _paths)
     {
-        if (paths.Length == 0)
+        if (_paths.Length == 0)
         {
             return;
         }
 
-        _path = "";
-        foreach (var p in paths)
+        path = "";
+        foreach (var path in _paths)
         {
-            _path += p + "\n";
+            this.path += path + "\n";
         }
     }
 
 
-    public void WriteResult(string path)
+    public void WriteResult(string _path)
     {
-        _path = path;
+        path = _path;
     }
 }

@@ -14,123 +14,123 @@ namespace SFB
 
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        public delegate void AsyncCallback(string path);
+        public delegate void AsyncCallback(string _path);
 
 
         [AOT.MonoPInvokeCallback(typeof(AsyncCallback))]
-        private static void openFileCb(string result)
+        private static void openFileCb(string _result)
         {
-            _openFileCb.Invoke(result.Split((char)28));
+            _openFileCb.Invoke(_result.Split((char)28));
         }
 
 
         [AOT.MonoPInvokeCallback(typeof(AsyncCallback))]
-        private static void openFolderCb(string result)
+        private static void openFolderCb(string _result)
         {
-            _openFolderCb.Invoke(result.Split((char)28));
+            _openFolderCb.Invoke(_result.Split((char)28));
         }
 
 
         [AOT.MonoPInvokeCallback(typeof(AsyncCallback))]
-        private static void saveFileCb(string result)
+        private static void saveFileCb(string _result)
         {
-            _saveFileCb.Invoke(result);
+            _saveFileCb.Invoke(_result);
         }
 
 
         [DllImport("StandaloneFileBrowser")]
-        private static extern IntPtr DialogOpenFilePanel(string title, string directory, string extension, bool multiselect);
+        private static extern IntPtr DialogOpenFilePanel(string _title, string _directory, string _extension, bool _isMultiselect);
         [DllImport("StandaloneFileBrowser")]
-        private static extern void DialogOpenFilePanelAsync(string title, string directory, string extension, bool multiselect, AsyncCallback callback);
+        private static extern void DialogOpenFilePanelAsync(string _title, string _directory, string _extension, bool _isMultiselect, AsyncCallback _callback);
         [DllImport("StandaloneFileBrowser")]
-        private static extern IntPtr DialogOpenFolderPanel(string title, string directory, bool multiselect);
+        private static extern IntPtr DialogOpenFolderPanel(string _title, string _directory, bool _isMultiselect);
         [DllImport("StandaloneFileBrowser")]
-        private static extern void DialogOpenFolderPanelAsync(string title, string directory, bool multiselect, AsyncCallback callback);
+        private static extern void DialogOpenFolderPanelAsync(string _title, string _directory, bool _isMultiselect, AsyncCallback _callback);
         [DllImport("StandaloneFileBrowser")]
-        private static extern IntPtr DialogSaveFilePanel(string title, string directory, string defaultName, string extension);
+        private static extern IntPtr DialogSaveFilePanel(string _title, string _directory, string _defaultName, string _extension);
         [DllImport("StandaloneFileBrowser")]
-        private static extern void DialogSaveFilePanelAsync(string title, string directory, string defaultName, string extension, AsyncCallback callback);
+        private static extern void DialogSaveFilePanelAsync(string _title, string _directory, string _defaultName, string _extension, AsyncCallback _callback);
 
 
-        public string[] OpenFilePanel(string title, string directory, ExtensionFilter[] extensions, bool multiselect)
+        public string[] OpenFilePanel(string _title, string _directory, ExtensionFilter[] _extensions, bool _isMultiselect)
         {
             var paths = Marshal.PtrToStringAnsi(DialogOpenFilePanel(
-                title,
-                directory,
-                GetFilterFromFileExtensionList(extensions),
-                multiselect));
+                _title,
+                _directory,
+                GetFilterFromFileExtensionList(_extensions),
+                _isMultiselect));
             return paths.Split((char)28);
         }
 
 
-        public void OpenFilePanelAsync(string title, string directory, ExtensionFilter[] extensions, bool multiselect, Action<string[]> cb)
+        public void OpenFilePanelAsync(string _title, string _directory, ExtensionFilter[] _extensions, bool _isMultiselect, Action<string[]> _cb)
         {
-            _openFileCb = cb;
+            _openFileCb = _cb;
             DialogOpenFilePanelAsync(
-                title,
-                directory,
-                GetFilterFromFileExtensionList(extensions),
-                multiselect,
+                _title,
+                _directory,
+                GetFilterFromFileExtensionList(_extensions),
+                _isMultiselect,
                 openFileCb);
         }
 
 
-        public string[] OpenFolderPanel(string title, string directory, bool multiselect)
+        public string[] OpenFolderPanel(string _title, string _directory, bool _isMultiselect)
         {
             var paths = Marshal.PtrToStringAnsi(DialogOpenFolderPanel(
-                title,
-                directory,
-                multiselect));
+                _title,
+                _directory,
+                _isMultiselect));
             return paths.Split((char)28);
         }
 
 
-        public void OpenFolderPanelAsync(string title, string directory, bool multiselect, Action<string[]> cb)
+        public void OpenFolderPanelAsync(string _title, string _directory, bool _isMultiselect, Action<string[]> _cb)
         {
-            _openFolderCb = cb;
+            _openFolderCb = _cb;
             DialogOpenFolderPanelAsync(
-                title,
-                directory,
-                multiselect,
+                _title,
+                _directory,
+                _isMultiselect,
                 openFolderCb);
         }
 
 
-        public string SaveFilePanel(string title, string directory, string defaultName, ExtensionFilter[] extensions)
+        public string SaveFilePanel(string _title, string _directory, string _defaultName, ExtensionFilter[] _extensions)
         {
             return Marshal.PtrToStringAnsi(DialogSaveFilePanel(
-                title,
-                directory,
-                defaultName,
-                GetFilterFromFileExtensionList(extensions)));
+                _title,
+                _directory,
+                _defaultName,
+                GetFilterFromFileExtensionList(_extensions)));
         }
 
 
-        public void SaveFilePanelAsync(string title, string directory, string defaultName, ExtensionFilter[] extensions, Action<string> cb)
+        public void SaveFilePanelAsync(string _title, string _directory, string _defaultName, ExtensionFilter[] _extensions, Action<string> _cb)
         {
-            _saveFileCb = cb;
+            _saveFileCb = _cb;
             DialogSaveFilePanelAsync(
-                title,
-                directory,
-                defaultName,
-                GetFilterFromFileExtensionList(extensions),
+                _title,
+                _directory,
+                _defaultName,
+                GetFilterFromFileExtensionList(_extensions),
                 saveFileCb);
         }
 
 
-        private static string GetFilterFromFileExtensionList(ExtensionFilter[] extensions)
+        private static string GetFilterFromFileExtensionList(ExtensionFilter[] _extensions)
         {
-            if (extensions == null)
+            if (_extensions == null)
             {
                 return "";
             }
 
             var filterString = "";
-            foreach (var filter in extensions)
+            foreach (var filter in _extensions)
             {
-                filterString += filter.Name + ";";
+                filterString += filter.name + ";";
 
-                foreach (var ext in filter.Extensions)
+                foreach (var ext in filter.extensions)
                 {
                     filterString += ext + ",";
                 }

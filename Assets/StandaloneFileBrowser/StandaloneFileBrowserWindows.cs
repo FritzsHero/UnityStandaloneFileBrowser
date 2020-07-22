@@ -13,10 +13,13 @@ namespace SFB
     // - WindowWrapper class and GetActiveWindow() are required for modal file dialog.
     // - "PlayerSettings/Visible In Background" should be enabled, otherwise when file dialog opened app window minimizes automatically.
 
+
     public class WindowWrapper : IWin32Window 
     {
         private IntPtr _hwnd;
-        public WindowWrapper(IntPtr handle) { _hwnd = handle; }
+
+
+        public WindowWrapper(IntPtr _handle) { _hwnd = _handle; }
         public IntPtr Handle { get { return _hwnd; } }
     }
 
@@ -27,23 +30,23 @@ namespace SFB
         private static extern IntPtr GetActiveWindow();
 
 
-        public string[] OpenFilePanel(string title, string directory, ExtensionFilter[] extensions, bool multiselect)
+        public string[] OpenFilePanel(string _title, string _directory, ExtensionFilter[] _extensions, bool _isMultiselect)
         {
             var fd = new VistaOpenFileDialog();
-            fd.Title = title;
-            if (extensions != null)
+            fd.Title = _title;
+            if (_extensions != null)
             {
-                fd.Filter = GetFilterFromFileExtensionList(extensions);
+                fd.Filter = GetFilterFromFileExtensionList(_extensions);
                 fd.FilterIndex = 1;
             }
             else
             {
                 fd.Filter = string.Empty;
             }
-            fd.Multiselect = multiselect;
-            if (!string.IsNullOrEmpty(directory))
+            fd.Multiselect = _isMultiselect;
+            if (!string.IsNullOrEmpty(_directory))
             {
-                fd.FileName = GetDirectoryPath(directory);
+                fd.FileName = GetDirectoryPath(_directory);
             }
             var res = fd.ShowDialog(new WindowWrapper(GetActiveWindow()));
             var filenames = res == DialogResult.OK ? fd.FileNames : new string[0];
@@ -52,17 +55,19 @@ namespace SFB
         }
 
 
-        public void OpenFilePanelAsync(string title, string directory, ExtensionFilter[] extensions, bool multiselect, Action<string[]> cb) {
-            cb.Invoke(OpenFilePanel(title, directory, extensions, multiselect));
+        public void OpenFilePanelAsync(string _title, string _directory, ExtensionFilter[] _extensions, bool _isMultiselect, Action<string[]> _cb)
+        {
+            _cb.Invoke(OpenFilePanel(_title, _directory, _extensions, _isMultiselect));
         }
 
 
-        public string[] OpenFolderPanel(string title, string directory, bool multiselect)
+        public string[] OpenFolderPanel(string _title, string _directory, bool _isMultiselect)
         {
             var fd = new VistaFolderBrowserDialog();
-            fd.Description = title;
-            if (!string.IsNullOrEmpty(directory)) {
-                fd.SelectedPath = GetDirectoryPath(directory);
+            fd.Description = _title;
+            if (!string.IsNullOrEmpty(_directory))
+            {
+                fd.SelectedPath = GetDirectoryPath(_directory);
             }
             var res = fd.ShowDialog(new WindowWrapper(GetActiveWindow()));
             var filenames = res == DialogResult.OK ? new []{ fd.SelectedPath } : new string[0];
@@ -71,35 +76,35 @@ namespace SFB
         }
 
 
-        public void OpenFolderPanelAsync(string title, string directory, bool multiselect, Action<string[]> cb)
+        public void OpenFolderPanelAsync(string _title, string _directory, bool _isMultiselect, Action<string[]> _cb)
         {
-            cb.Invoke(OpenFolderPanel(title, directory, multiselect));
+            _cb.Invoke(OpenFolderPanel(_title, _directory, _isMultiselect));
         }
 
 
-        public string SaveFilePanel(string title, string directory, string defaultName, ExtensionFilter[] extensions)
+        public string SaveFilePanel(string _title, string _directory, string _defaultName, ExtensionFilter[] _extensions)
         {
             var fd = new VistaSaveFileDialog();
-            fd.Title = title;
+            fd.Title = _title;
 
             var finalFilename = "";
 
-            if (!string.IsNullOrEmpty(directory))
+            if (!string.IsNullOrEmpty(_directory))
             {
-                finalFilename = GetDirectoryPath(directory);
+                finalFilename = GetDirectoryPath(_directory);
             }
 
-            if (!string.IsNullOrEmpty(defaultName))
+            if (!string.IsNullOrEmpty(_defaultName))
             {
-                finalFilename += defaultName;
+                finalFilename += _defaultName;
             }
 
             fd.FileName = finalFilename;
-            if (extensions != null)
+            if (_extensions != null)
             {
-                fd.Filter = GetFilterFromFileExtensionList(extensions);
+                fd.Filter = GetFilterFromFileExtensionList(_extensions);
                 fd.FilterIndex = 1;
-                fd.DefaultExt = extensions[0].Extensions[0];
+                fd.DefaultExt = _extensions[0].extensions[0];
                 fd.AddExtension = true;
             }
             else
@@ -115,22 +120,22 @@ namespace SFB
         }
 
 
-        public void SaveFilePanelAsync(string title, string directory, string defaultName, ExtensionFilter[] extensions, Action<string> cb)
+        public void SaveFilePanelAsync(string _title, string _directory, string _defaultName, ExtensionFilter[] _extensions, Action<string> _cb)
         {
-            cb.Invoke(SaveFilePanel(title, directory, defaultName, extensions));
+            _cb.Invoke(SaveFilePanel(_title, _directory, _defaultName, _extensions));
         }
 
 
         // .NET Framework FileDialog Filter format
         // https://msdn.microsoft.com/en-us/library/microsoft.win32.filedialog.filter
-        private static string GetFilterFromFileExtensionList(ExtensionFilter[] extensions)
+        private static string GetFilterFromFileExtensionList(ExtensionFilter[] _extensions)
         {
             var filterString = "";
-            foreach (var filter in extensions)
+            foreach (var filter in _extensions)
             {
-                filterString += filter.Name + "(";
+                filterString += filter.name + "(";
 
-                foreach (var ext in filter.Extensions)
+                foreach (var ext in filter.extensions)
                 {
                     filterString += "*." + ext + ",";
                 }
@@ -138,7 +143,7 @@ namespace SFB
                 filterString = filterString.Remove(filterString.Length - 1);
                 filterString += ") |";
 
-                foreach (var ext in filter.Extensions)
+                foreach (var ext in filter.extensions)
                 {
                     filterString += "*." + ext + "; ";
                 }
@@ -150,16 +155,16 @@ namespace SFB
         }
 
 
-        private static string GetDirectoryPath(string directory)
+        private static string GetDirectoryPath(string _directory)
         {
-            var directoryPath = Path.GetFullPath(directory);
+            var directoryPath = Path.GetFullPath(_directory);
             if (!directoryPath.EndsWith("\\"))
             {
                 directoryPath += "\\";
             }
             if (Path.GetPathRoot(directoryPath) == directoryPath)
             {
-                return directory;
+                return _directory;
             }
             return Path.GetDirectoryName(directoryPath) + Path.DirectorySeparatorChar;
         }

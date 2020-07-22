@@ -13,7 +13,7 @@ public class CanvasSampleSaveFileText : MonoBehaviour, IPointerDownHandler
     public Text output;
 
     // Sample text data
-    private string _data = "Example text created by StandaloneFileBrowser";
+    private string data = "Example text created by StandaloneFileBrowser";
 
 
 #if UNITY_WEBGL && !UNITY_EDITOR
@@ -21,13 +21,13 @@ public class CanvasSampleSaveFileText : MonoBehaviour, IPointerDownHandler
 
 
     [DllImport("__Internal")]
-    private static extern void DownloadFile(string gameObjectName, string methodName, string filename, byte[] byteArray, int byteArraySize);
+    private static extern void DownloadFile(string _gameObjectName, string _methodName, string _fileName, byte[] _byteArray, int _byteArraySize);
 
 
     // Broser plugin should be called in OnPointerDown.
-    public void OnPointerDown(PointerEventData eventData)
+    public void OnPointerDown(PointerEventData _eventData)
     {
-        var bytes = Encoding.UTF8.GetBytes(_data);
+        var bytes = Encoding.UTF8.GetBytes(data);
         DownloadFile(gameObject.name, "OnFileDownload", "sample.txt", bytes, bytes.Length);
     }
 
@@ -39,7 +39,7 @@ public class CanvasSampleSaveFileText : MonoBehaviour, IPointerDownHandler
     }
 #else
     // Standalone platforms & editor
-    public void OnPointerDown(PointerEventData eventData) { }
+    public void OnPointerDown(PointerEventData _eventData) { }
 
 
     // Listen OnClick event in standlone builds
@@ -55,7 +55,7 @@ public class CanvasSampleSaveFileText : MonoBehaviour, IPointerDownHandler
         var path = StandaloneFileBrowser.SaveFilePanel("Title", "", "sample", "txt");
         if (!string.IsNullOrEmpty(path))
         {
-            File.WriteAllText(path, _data);
+            File.WriteAllText(path, data);
         }
     }
 #endif

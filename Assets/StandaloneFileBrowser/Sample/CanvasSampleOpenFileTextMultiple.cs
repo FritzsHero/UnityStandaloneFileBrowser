@@ -19,25 +19,25 @@ public class CanvasSampleOpenFileTextMultiple : MonoBehaviour, IPointerDownHandl
 
 
     [DllImport("__Internal")]
-    private static extern void UploadFile(string gameObjectName, string methodName, string filter, bool multiple);
+    private static extern void UploadFile(string _gameObjectName, string _methodName, string _filter, bool _isMultiple);
 
 
-    public void OnPointerDown(PointerEventData eventData)
+    public void OnPointerDown(PointerEventData _eventData)
     {
         UploadFile(gameObject.name, "OnFileUpload", ".txt", true);
     }
 
 
     // Called from browser
-    public void OnFileUpload(string urls)
+    public void OnFileUpload(string _urls)
     {
-        StartCoroutine(OutputRoutine(urls.Split(',')));
+        StartCoroutine(OutputRoutine(_urls.Split(',')));
     }
 #else
     // Standalone platforms & editor
 
 
-    public void OnPointerDown(PointerEventData eventData) { }
+    public void OnPointerDown(PointerEventData _eventData) { }
 
 
     void Start()
@@ -64,12 +64,12 @@ public class CanvasSampleOpenFileTextMultiple : MonoBehaviour, IPointerDownHandl
 #endif
 
 
-    private IEnumerator OutputRoutine(string[] urlArr)
+    private IEnumerator OutputRoutine(string[] _urls)
     {
         var outputText = "";
-        for (int i = 0; i < urlArr.Length; i++)
+        for (int i = 0; i < _urls.Length; i++)
         {
-            var loader = new WWW(urlArr[i]);
+            var loader = new WWW(_urls[i]);
             yield return loader;
             outputText += loader.text;
         }

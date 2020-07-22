@@ -12,7 +12,7 @@ public class CanvasSampleSaveFileImage : MonoBehaviour, IPointerDownHandler
 {
     public Text output;
 
-    private byte[] _textureBytes;
+    private byte[] textureBytes;
 
 
     void Awake()
@@ -29,7 +29,7 @@ public class CanvasSampleSaveFileImage : MonoBehaviour, IPointerDownHandler
             }
         }
         tex.Apply();
-        _textureBytes = tex.EncodeToPNG();
+        textureBytes = tex.EncodeToPNG();
         UnityEngine.Object.Destroy(tex);
     }
 
@@ -39,13 +39,13 @@ public class CanvasSampleSaveFileImage : MonoBehaviour, IPointerDownHandler
 
 
     [DllImport("__Internal")]
-    private static extern void DownloadFile(string gameObjectName, string methodName, string filename, byte[] byteArray, int byteArraySize);
+    private static extern void DownloadFile(string _gameObjectName, string _methodName, string _fileName, byte[] _byteArray, int _byteArraySize);
 
 
     // Broser plugin should be called in OnPointerDown.
-    public void OnPointerDown(PointerEventData eventData)
+    public void OnPointerDown(PointerEventData _eventData)
     {
-        DownloadFile(gameObject.name, "OnFileDownload", "sample.png", _textureBytes, _textureBytes.Length);
+        DownloadFile(gameObject.name, "OnFileDownload", "sample.png", textureBytes, textureBytes.Length);
     }
 
 
@@ -58,7 +58,7 @@ public class CanvasSampleSaveFileImage : MonoBehaviour, IPointerDownHandler
     // Standalone platforms & editor
 
 
-    public void OnPointerDown(PointerEventData eventData) { }
+    public void OnPointerDown(PointerEventData _eventData) { }
 
 
     // Listen OnClick event in standlone builds
@@ -74,7 +74,7 @@ public class CanvasSampleSaveFileImage : MonoBehaviour, IPointerDownHandler
         var path = StandaloneFileBrowser.SaveFilePanel("Title", "", "sample", "png");
         if (!string.IsNullOrEmpty(path))
         {
-            File.WriteAllBytes(path, _textureBytes);
+            File.WriteAllBytes(path, textureBytes);
         }
     }
 #endif
